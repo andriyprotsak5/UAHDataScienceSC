@@ -1,0 +1,182 @@
+---
+title: "Basic Functionality of UAHDataScienceSC"
+author: "Andriy Protsak Protsak"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Basic Functionality of UAHDataScienceSC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(cli)
+library(UAHDataScienceSC)
+```
+
+## Introduction
+
+UAHDataScienceSC provides an educational framework for learning supervised classification through hands-on implementation and visualization. The package combines algorithm implementations with interactive learning features, visualization tools, and carefully curated test datasets to facilitate understanding of machine learning concepts.
+
+# 1. Installing and Loading the Package
+
+If UAHDataScienceSC is on CRAN:
+```{r install-package, eval = FALSE}
+install.packages("UAHDataScienceSC")
+```
+
+Then, load it into your R session:
+```{r load-package}
+library(UAHDataScienceSC)
+```
+
+# 2. Built-in Datasets
+
+The package includes several datasets designed to demonstrate different aspects of machine learning algorithms. Each dataset serves specific educational purposes and highlights particular challenges in data analysis.
+
+## Flower Classification
+The flower classification dataset (db_flowers) contains measurements of flower characteristics including petal length, petal width, sepal length, and sepal width. These measurements are used to classify flowers into three distinct species (setosa, versicolor, virginica), with additional unknown samples provided for testing purposes. The dataset maintains a balanced distribution of classes, making it particularly suitable for initial classification exercises.
+
+```{r load-flower-db}
+load("~/UAHDataScienceSC/data/db_flowers.rda")
+head(db_flowers)
+```
+
+## Logic Gate Datasets
+The logic gate datasets simulate binary classification problems with varying complexity.
+These variations help illustrate the capabilities and limitations of different classification algorithms.
+
+### AND Gate Dataset   
+
+The AND gate dataset (db_per_and) demonstrates basic binary classification with three input variables and a single output that follows logical AND rules. This dataset proves especially useful for understanding perceptron training on linearly separable patterns.
+
+```{r load-and-db}
+load("~/UAHDataScienceSC/data/db_per_and.rda")
+head(db_per_and)
+```
+
+### OR Gate Dataset  
+
+The OR gate dataset (db_per_or) extends the binary classification concept with OR logic.
+
+```{r load-or-db}
+load("~/UAHDataScienceSC/data/db_per_or.rda")
+head(db_per_or)
+```
+
+### XOR Gate Dataset  
+
+The XOR gate dataset (db_per_xor) presents a more challenging non-linearly separable problem.
+
+```{r load-xor-db}
+load("~/UAHDataScienceSC/data/db_per_xor.rda")
+head(db_per_and)
+```
+
+## Vehicle Classification
+
+The vehicle classification dataset (db2) presents a real-world application scenario combining categorical and numerical features. The dataset uses license types, wheel counts, and passenger capacity to classify vehicles into categories such as cars, motorcycles, bicycles, and trucks. This mixed-type data structure provides practical experience with handling diverse input features.
+
+```{r load-db2}
+load("~/UAHDataScienceSC/data/db2.rda")
+head(db2)
+```
+
+## Extended Vehicle Classification
+The extended vehicle dataset (db3) builds upon db2 by introducing additional complexity through new vehicle types and relationships, making it particularly suitable for exploring decision tree depth impacts and algorithm scalability.
+
+```{r load-db3}
+load("~/UAHDataScienceSC/data/db3.rda")
+head(db3)
+```
+
+## Regression Test
+The regression test dataset (db1rl) incorporates various mathematical relationships including linear, exponential, logarithmic, and sinusoidal patterns. This diversity allows users to compare the effectiveness of different regression approaches and understand their appropriateness for various data patterns.
+
+```{r load-db1rl}
+load("~/UAHDataScienceSC/data/db1rl.rda")
+head(db1rl)
+```
+
+# 3. Algorithm Implementations
+
+## K-Nearest Neighbors (KNN)
+The KNN implementation supports various distance calculation methods to accommodate different data types and relationship patterns. The algorithm can employ Euclidean distance for standard numerical data, Manhattan distance for grid-like patterns, cosine similarity for angular relationships, and specialized metrics like Hamming distance for categorical data. The choice of distance method significantly impacts classification results and should be selected based on data characteristics and problem requirements.
+
+```{r knn-basic-usage}
+result <- knn(
+  data = db_flowers,
+  ClassLabel = "ClassLabel",
+  p1 = c(4.7, 1.2, 5.3, 2.1),
+  d_method = "euclidean",
+  k = 3
+)
+print(result)
+```
+
+The interactive learning mode provides step-by-step visualization of the classification process:
+
+```{r knn-interactive-usage}
+result <- knn(
+  data = db_flowers,
+  ClassLabel = "ClassLabel",
+  p1 = c(4.7, 1.2, 5.3, 2.1),
+  d_method = "euclidean",
+  k = 3,
+  learn = TRUE,
+  waiting = FALSE
+)
+```
+
+## Decision Trees
+The decision tree implementation offers multiple impurity measures for node splitting decisions. The entropy method bases decisions on information theory principles, while the Gini method considers misclassification probability. The error rate method provides a direct measure of classification accuracy. Each method may produce different tree structures, offering insights into various approaches to data partitioning.
+
+```{r decision-tree-usage}
+tree <- decision_tree(
+  data = db2,
+  classy = "VehicleType",
+  m = 4,
+  method = "gini",
+  learn = TRUE
+)
+print(tree)
+```
+
+## Perceptron
+The perceptron implementation includes several activation functions to model different decision boundaries. The step function provides basic binary thresholding, while continuous functions like sine, tangent, and ReLU offer smoother transitions. Advanced functions such as GELU and Swish incorporate modern neural network concepts.
+
+```{r perceptron-usage}
+weights <- perceptron(
+  training_data = db_per_and,
+  to_clasify = c(0, 0, 1),
+  activation_method = "swish",
+  max_iter = 1000,
+  learning_rate = 0.1,
+  learn = TRUE
+)
+```
+
+## Regression Analysis
+Linear and polynomial regression implementations allow for modeling relationships of varying complexity. The linear regression handles straightforward proportional relationships, while polynomial regression captures more complex patterns through higher-degree equations.
+
+```{r regression-usage}
+# Linear regression
+linear_model <- multivariate_linear_regression(
+  data = db1rl,
+  learn = TRUE
+)
+
+# Polynomial regression
+poly_model <- polynomial_regression(
+  data = db1rl,
+  degree = 4,
+  learn = TRUE
+)
+```
+
+
+
